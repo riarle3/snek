@@ -3,60 +3,60 @@
 
 Snake::Snake( const Location& loc )
 {
-	constexpr int nBodyColors = 4;
-	constexpr Color bodyColors[nBodyColors] = {		
-		{ 10,100,32 },
-		{ 10,130,48 },
-		{ 18,160,48 },
-		{ 10,130,48 }
-	};
-		
-	for( int i = 0; i < nSegmentsMax; ++i )
-	{
-		segments[i].InitBody( bodyColors[i % nBodyColors] );
-	}
+	segments.push_back(new Segment());
+	segments[0]->InitHead( loc );
+}
 
-	segments[0].InitHead( loc );
+Snake::~Snake()
+{
+	for (auto& s : segments)
+	{
+		delete s;
+		s = nullptr;
+	}
+	segments.clear();
 }
 
 void Snake::MoveBy( const Location& delta_loc )
 {
-	for( int i = nSegments - 1; i > 0; --i )
+	for( int i = segments.size() - 1; i > 0; --i )
 	{
-		segments[i].Follow( segments[i - 1] );
+		segments[i]->Follow( *segments[i - 1] );
 	}
-	segments[0].MoveBy( delta_loc );
+	segments[0]->MoveBy( delta_loc );
 }
 
 Location Snake::GetNextHeadLocation( const Location& delta_loc ) const
 {
-	Location l( segments[0].GetLocation() );
+	Location l( segments[0]->GetLocation() );
 	l.Add( delta_loc );
 	return l;
 }
 
 void Snake::GrowAndMoveBy( const Location& delta_loc )
 {
-	if( nSegments < nSegmentsMax )
+	if( segments.size() < nSegmentsMax )
 	{
-		++nSegments;
+		int segIndex = segments.size();
+		segments.push_back(new Segment());
+		segments[segIndex]->InitBody(bodyColors[segIndex % nBodyColors]);
 	}
 	MoveBy( delta_loc );
 }
 
 void Snake::Draw( Board & brd ) const
 {
-	for( int i = 0; i < nSegments; ++i )
+	for( int i = 0; i < segments.size(); ++i )
 	{
-		segments[i].Draw( brd );
+		segments[i]->Draw( brd );
 	}
 }
 
 bool Snake::IsInTileExceptEnd( const Location& target ) const
 {
-	for( int i = 0; i < nSegments - 1; ++i )
+	for( int i = 0; i < segments.size() - 1; ++i )
 	{
-		if( segments[i].GetLocation() == target )
+		if( segments[i]->GetLocation() == target )
 		{
 			return true;
 		}
@@ -66,9 +66,9 @@ bool Snake::IsInTileExceptEnd( const Location& target ) const
 
 bool Snake::IsInTile( const Location& target ) const
 {
-	for( int i = 0; i < nSegments; ++i )
+	for (int i = 0; i < segments.size(); ++i)
 	{
-		if( segments[i].GetLocation() == target )
+		if (segments[i]->GetLocation() == target)
 		{
 			return true;
 		}
