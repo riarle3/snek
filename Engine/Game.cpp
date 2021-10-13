@@ -22,13 +22,17 @@
 #include "Game.h"
 #include "SpriteCodex.h"
 
-Game::Game( MainWindow& wnd )
+Game::Game(MainWindow& wnd)
 	:
-	wnd( wnd ),
-	gfx( wnd ),
-	brd( gfx ),
-	rng( std::random_device()() ),
-	snek( {2,2} )
+	wnd(wnd),
+	gfx(wnd),
+	settings("settings.txt"),
+	brd(gfx, settings),
+	rng(std::random_device()()),
+	snek({ 2,2 }),
+	nPoison(settings.PoisonAmount()),
+	nFood(settings.FoodAmount()),
+	snekSpeedupFactor(settings.SpeedupRate())
 {
 	for( int i = 0; i < nPoison; i++ )
 	{

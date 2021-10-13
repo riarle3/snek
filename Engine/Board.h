@@ -3,6 +3,7 @@
 #include "Graphics.h"
 #include "Location.h"
 #include <random>
+#include "Settings.h"
 
 class Board
 {
@@ -15,7 +16,8 @@ public:
 		Poison
 	};
 public:
-	Board( Graphics& gfx );
+	Board( Graphics& gfx, Settings& stn );
+	~Board();
 	void DrawCell( const Location& loc,Color c );
 	int GetGridWidth() const;
 	int GetGridHeight() const;
@@ -26,18 +28,18 @@ public:
 	void DrawBorder();
 	void DrawCells();
 private:
+	Graphics& gfx;
 	static constexpr Color borderColor = Colors::Blue;
 	static constexpr Color obstacleColor = Colors::Gray;
 	static constexpr Color poisonColor = { 64,8,64 };
 	static constexpr Color foodColor = Colors::Red;
-	static constexpr int dimension = 20;
 	static constexpr int cellPadding = 1;
-	static constexpr int width = 32;
-	static constexpr int height = 24;
 	static constexpr int borderWidth = 4;
 	static constexpr int borderPadding = 2;
-	static constexpr int x = 70;
-	static constexpr int y = 50;
-	CellContents contents[width * height] = { CellContents::Empty };
-	Graphics& gfx;
+	int dimension;
+	int width;
+	int height;
+	int x;
+	int y;
+	CellContents* contents;
 };

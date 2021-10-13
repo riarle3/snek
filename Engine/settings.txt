@@ -1,0 +1,5 @@
+tile-size=40
+board-size=16 12
+speedup-rate=0.93f
+poison-amount=60
+food-amount=8
